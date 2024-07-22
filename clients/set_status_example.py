@@ -7,10 +7,10 @@ config = json.load(open('config.json'))
 CLIENT_TYPE_SENDER = 1
 
 ws = create_connection(config["server"], header={
-                                  "client_type": str(CLIENT_TYPE_SENDER),
+                                  "client-type": str(CLIENT_TYPE_SENDER),
                                   "password": config["password"],
-                                  "discord_client_id": "1258728548613619733",
-                                  "activity_name": "test"
+                                  "discord-client_id": "1258728548613619733",
+                                  "activity-name": "test"
                               })
 
 while True:

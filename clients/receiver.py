@@ -84,8 +84,8 @@ if __name__ == "__main__":
                               on_error=on_error,
                               on_close=on_close,
                               header={
-                                  "client_type": str(CLIENT_TYPE_RECEIVER),
                                   "password": config["password"],
+                                  "client-type": str(CLIENT_TYPE_RECEIVER),
                               })
 
     ws.run_forever(dispatcher=rel, reconnect=5)  # Set dispatcher to automatic reconnection, 5 second reconnect delay if connection closed unexpectedly

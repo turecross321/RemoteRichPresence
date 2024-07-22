@@ -18,14 +18,14 @@ const ClientType = {
 
 let clients = [];
 
-function get_clients_of_type(clientType) {
-    return clients.filter(item => item.client_type == clientType);
+function getClientsOfType(clientType) {
+    return clients.filter(item => item.clientType == clientType);
 }
 
-function send_to_receivers(object) {
+function sendToReceivers(object) {
     const content = JSON.stringify(object);
 
-    for (let client of get_clients_of_type(ClientType.Receiver)) {
+    for (let client of getClientsOfType(ClientType.Receiver)) {
         console.log("Sending %s to receiver", content);
         client.socket.send(content);
     }
@@ -34,51 +34,51 @@ function send_to_receivers(object) {
 console.log("Starting server at %d", serverPort);
 const wss = new WebSocketServer({ port: serverPort, verifyClient: (info, cb) => {
     const password = info.req.headers.password;
-    const clientType = info.req.headers.client_type;
-    const activityName = info.req.headers.activity_name;
-    const discordClientId = info.req.headers.discord_client_id;
+    const clientType = info.req.headers['client-type'];
+    const activityName = info.req.headers['activity-name'];
+    const discordClientId = info.req.headers['discord-client-id'];
 
     console.log("Verifying client...");
 
-    let error_message = "";
-    let error_code = 0;
+    let errorMessage = "";
+    let errorCode = 0;
     let error = false;
 
     if (!password) {
-        error_message = 'No `password` header';
-        error_code = 400;
+        errorMessage = 'No `password` header';
+        errorCode = 400;
         error = true;
     }
 
     if (password != serverPassword) {
-        error_message = 'Invalid password'
-        error_code = 401;
+        errorMessage = 'Invalid password'
+        errorCode = 401;
         error = true;
     }
 
     if (!clientType) {
-        error_message = 'No `client_type` header';
-        error_code = 400;
+        errorMessage = 'No `client-type` header';
+        errorCode = 400;
         error = true;
     }
 
     if (clientType === ClientType.Sender) {
         if (!activityName) {
-            error_message = 'No `activity_name` header';
-            error_code = 400;
+            errorMessage = 'No `activity-name` header';
+            errorCode = 400;
             error = true;
         }
     
         if (!discordClientId) {
-            error_message = 'No `discord_client_id` header';
-            error_code = 400;
+            errorMessage = 'No `discord-client-id` header';
+            errorCode = 400;
             error = true;
         }
     }
 
     if (error === true) {
-        console.log("Denying connection [%d]: %s", error_code, error_message);
-        cb(false, error_code, error_message);
+        console.log("Denying connection [%d]: %s", errorCode, errorMessage);
+        cb(false, errorCode, errorMessage);
         return;
     }
 
@@ -97,7 +97,7 @@ const wss = new WebSocketServer({ port: serverPort, verifyClient: (info, cb) => 
 } });
 
 wss.on('connection', function connection(ws, req) {
-    const client = {"client_type": req.clientType, "socket": ws, "activity_name": req.activityName, "discord_client_id": req.discordClientId};
+    const client = {"clientType": req.clientType, "socket": ws, "activityName": req.activityName, "discordClientId": req.discordClientId};
     clients.push(client);
 
     ws.on('error', console.error);
@@ -109,7 +109,7 @@ wss.on('connection', function connection(ws, req) {
             console.log("[%s] Received %s", req.activityName, newPresence);
             const message = {"command": "update", "name": req.activityName, "client_id": req.discordClientId, "presence": newPresence};
 
-            send_to_receivers(message);
+            sendToReceivers(message);
         }
     });
 
@@ -117,7 +117,7 @@ wss.on('connection', function connection(ws, req) {
         if (req.clientType == ClientType.Sender) {
             console.log("[%s] Disconnected", req.activityName);
             const message = {"command": "stop", "name": req.activityName};
-            send_to_receivers(message);
+            sendToReceivers(message);
         }
         else if (req.clientType == ClientType.Receiver) {
             console.log("Receiver disconnected");
