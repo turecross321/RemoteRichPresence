@@ -2,13 +2,14 @@ from websocket import create_connection
 import json
 import time
 
-config = json.load(open('config.json'))
+SERVER_PASSWORD = "password"
+SERVER_URL = "ws://127.0.0.1:8080"
 
 CLIENT_TYPE_SENDER = 1
 
-ws = create_connection(config["server"], header={
+ws = create_connection(SERVER_URL, header={
                                   "client-type": str(CLIENT_TYPE_SENDER),
-                                  "password": config["password"],
+                                  "password": SERVER_PASSWORD,
                                   "discord-client-id": "1258728548613619733",
                                   "activity-name": "test"
                               })

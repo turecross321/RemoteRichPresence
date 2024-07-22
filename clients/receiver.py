@@ -5,7 +5,9 @@ import json
 import multiprocessing
 from discordrp import Presence
 
-config = json.load(open('config.json'))
+SERVER_PASSWORD = "password"
+SERVER_URL = "ws://127.0.0.1:8080"
+
 processes = {}
 queues = {}
 
@@ -77,14 +79,14 @@ def on_open(ws: websocket.WebSocketApp):
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
-    print("Connecting to", config["server"])
-    ws = websocket.WebSocketApp(config["server"],
+    print("Connecting to", SERVER_URL)
+    ws = websocket.WebSocketApp(SERVER_URL,
                               on_open=on_open,
                               on_message=on_message,
                               on_error=on_error,
                               on_close=on_close,
                               header={
-                                  "password": config["password"],
+                                  "password": SERVER_PASSWORD,
                                   "client-type": str(CLIENT_TYPE_RECEIVER),
                               })
 
