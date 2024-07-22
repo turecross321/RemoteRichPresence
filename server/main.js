@@ -5,6 +5,12 @@ if (!serverPassword) {
     throw new Error("PRESENCE_SERVER_PASSWORD environment variable is not set!");
 }
 
+let serverPort = process.env.PRESENCE_SERVER_PORT
+if (!serverPort) {
+    console.log("PRESENCE_SERVER_PORT environment variable has not been specified. Using default port...");
+    serverPort = 8080;
+}
+
 const ClientType = {
     Receiver: 0,
     Sender: 1,
@@ -25,7 +31,8 @@ function send_to_receivers(object) {
     }
 }
 
-const wss = new WebSocketServer({ port: 8080, verifyClient: (info, cb) => {
+console.log("Starting server at %d", serverPort);
+const wss = new WebSocketServer({ port: serverPort, verifyClient: (info, cb) => {
     const password = info.req.headers.password;
     const clientType = info.req.headers.client_type;
     const activityName = info.req.headers.activity_name;
