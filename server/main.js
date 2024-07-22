@@ -62,7 +62,7 @@ const wss = new WebSocketServer({ port: serverPort, verifyClient: (info, cb) => 
         error = true;
     }
 
-    if (clientType === ClientType.Sender) {
+    if (clientType == ClientType.Sender) {
         if (!activityName) {
             errorMessage = 'No `activity-name` header';
             errorCode = 400;

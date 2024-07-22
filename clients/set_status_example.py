@@ -9,7 +9,7 @@ CLIENT_TYPE_SENDER = 1
 ws = create_connection(config["server"], header={
                                   "client-type": str(CLIENT_TYPE_SENDER),
                                   "password": config["password"],
-                                  "discord-client_id": "1258728548613619733",
+                                  "discord-client-id": "1258728548613619733",
                                   "activity-name": "test"
                               })
 
