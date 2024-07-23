@@ -42,6 +42,19 @@ def add_presence(name, client_id):
 def update_presence(queue, new_presence):
     queue.put(new_presence)
 
+def remove_presence(name):
+    process = processes[name]
+    process.terminate()
+
+    processes.pop(name)
+    queues.pop(name)
+    
+    print(f"[{name} Stopping presence")
+
+def clear_presences():
+    for name in processes.keys():
+        remove_presence(name)
+
 
 def on_message(ws, message):
     parsed = json.loads(message)
@@ -49,13 +62,7 @@ def on_message(ws, message):
 
     match parsed["command"]:
         case "stop":
-            process = processes[parsed["name"]]
-            process.terminate()
-
-            processes.pop(parsed["name"])
-            queues.pop(parsed["name"])
-            
-            print(f"[{parsed["name"]} Stopping presence")
+            remove_presence(parsed["name"])
         case "update":
             if parsed["name"] not in queues:
                 print(f"Attempted to update non previously added presence \"{parsed["name"]}\". Adding...")
@@ -72,10 +79,12 @@ def on_error(ws, error):
     print(error)
 
 def on_close(ws, close_status_code, close_msg):
-    print("### closed ###")
+    print("Closed connection")
+    clear_presences()
 
 def on_open(ws: websocket.WebSocketApp):
     print("Opened connection")
+    clear_presences()
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
