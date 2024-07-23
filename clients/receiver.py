@@ -90,6 +90,6 @@ if __name__ == "__main__":
                                   "client-type": str(CLIENT_TYPE_RECEIVER),
                               })
 
-    ws.run_forever(dispatcher=rel, reconnect=5)  # Set dispatcher to automatic reconnection, 5 second reconnect delay if connection closed unexpectedly
+    ws.run_forever(dispatcher=rel, reconnect=5, ping_interval=30)  # Set dispatcher to automatic reconnection, 5 second reconnect delay if connection closed unexpectedly
     rel.signal(2, rel.abort)  # Keyboard Interrupt
     rel.dispatch()
